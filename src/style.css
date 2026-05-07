@@ -498,8 +498,12 @@ button {
   padding-bottom: 80vh;
 }
 
-/* Quote — JS controls position (absolute/fixed/absolute) */
+/* Quote — JS controls position and opacity */
 .gallery-quote-js {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -508,7 +512,8 @@ button {
   max-width: 480px;
   padding: 2rem 1rem;
   pointer-events: none;
-  /* JS sets: position, top/bottom, left, transform */
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .gallery-center-icon {

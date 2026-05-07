@@ -77,38 +77,34 @@ export default function GalleryPreview() {
           img.style.transform = `scale(${scale})`
         })
 
-        // --- JS-pinned quote ---
+        // --- JS-pinned quote (fixed only, fade in/out — no position switching) ---
         if (stickySection && quote) {
           const sectionRect = stickySection.getBoundingClientRect()
           const vh = window.innerHeight
           const quoteH = quote.offsetHeight
 
-          // Section top has passed the viewport center → pin the quote
-          // Section bottom minus buffer is still below viewport center → keep pinned
-          const pinStart = sectionRect.top <= vh * 0.5
-          const pinEnd = sectionRect.bottom - quoteH <= vh * 0.5
+          const pinStart = sectionRect.top <= vh * 0.4
+          const pinEnd = sectionRect.bottom <= vh * 0.5 + quoteH
+
+          // Always keep it fixed center — only change opacity
+          quote.style.position = 'fixed'
+          quote.style.top = '50%'
+          quote.style.left = '50%'
+          quote.style.transform = 'translate(-50%, -50%)'
 
           if (!pinStart) {
-            // Haven't reached the section yet — quote at natural top position
-            quote.style.position = 'absolute'
-            quote.style.top = '0'
-            quote.style.bottom = ''
-            quote.style.left = '50%'
-            quote.style.transform = 'translateX(-50%)'
+            // Before section — hidden
+            quote.style.opacity = '0'
           } else if (pinStart && !pinEnd) {
-            // Section is active — pin quote fixed at viewport center
-            quote.style.position = 'fixed'
-            quote.style.top = '50%'
-            quote.style.bottom = ''
-            quote.style.left = '50%'
-            quote.style.transform = 'translate(-50%, -50%)'
+            // Section active — fully visible
+            quote.style.opacity = '1'
           } else {
-            // Section has passed — lock quote to bottom of section
-            quote.style.position = 'absolute'
-            quote.style.top = ''
-            quote.style.bottom = '0'
-            quote.style.left = '50%'
-            quote.style.transform = 'translateX(-50%)'
+            // Section ending — fade out smoothly
+            const fadeRange = vh * 0.3
+            const fadeProgress = Math.min(1, Math.max(0,
+              (vh * 0.5 + quoteH - sectionRect.bottom) / fadeRange
+            ))
+            quote.style.opacity = String(1 - fadeProgress)
           }
         }
 

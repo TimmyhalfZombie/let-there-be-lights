@@ -9,9 +9,14 @@ const ALL_IMAGES = [
   { src: '/images/Peace-Cultivated.jpg', title: 'Peace Cultivated', day: 'Aug 27' },
 ]
 
+const QUOTE_TEXT = "The Lord is my shepherd; I shall not want. He maketh me to lie down in green pastures: He leadeth me beside the still waters. He restoreth my soul: He leadeth me in the paths of righteousness for His name's sake."
+
 export default function GalleryPreview() {
   const sectionRef = useRef<HTMLElement>(null)
   const cardRefs = useRef<(HTMLElement | null)[]>([])
+  const stickySectionRef = useRef<HTMLDivElement>(null)
+  const quoteRef = useRef<HTMLDivElement>(null)
+  const wordRefs = useRef<HTMLSpanElement[]>([])
 
   // Observe .reveal elements
   useEffect(() => {
@@ -42,10 +47,13 @@ export default function GalleryPreview() {
     return () => revealElements.forEach(el => observer.unobserve(el))
   }, [])
 
-  // Scroll-driven zoom-out on images
+  // JS-driven: pin quote at center, zoom images, word-by-word reveal
   useEffect(() => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (prefersReduced) return
+    if (prefersReduced) {
+      wordRefs.current.forEach(w => { w.style.color = 'var(--text)' })
+      return
+    }
 
     let ticking = false
 
@@ -54,30 +62,95 @@ export default function GalleryPreview() {
       ticking = true
 
       requestAnimationFrame(() => {
+        const stickySection = stickySectionRef.current
+        const quote = quoteRef.current
+
+        // --- Image zoom-out ---
         cardRefs.current.forEach(card => {
           if (!card) return
           const img = card.querySelector('img') as HTMLImageElement | null
           if (!img) return
-
           const rect = card.getBoundingClientRect()
           const vh = window.innerHeight
           const progress = Math.min(1, Math.max(0, 1 - (rect.top / vh)))
           const scale = 1.18 - (progress * 0.18)
           img.style.transform = `scale(${scale})`
         })
+
+        // --- JS-pinned quote ---
+        if (stickySection && quote) {
+          const sectionRect = stickySection.getBoundingClientRect()
+          const vh = window.innerHeight
+          const quoteH = quote.offsetHeight
+
+          // Section top has passed the viewport center → pin the quote
+          // Section bottom minus buffer is still below viewport center → keep pinned
+          const pinStart = sectionRect.top <= vh * 0.5
+          const pinEnd = sectionRect.bottom - quoteH <= vh * 0.5
+
+          if (!pinStart) {
+            // Haven't reached the section yet — quote at natural top position
+            quote.style.position = 'absolute'
+            quote.style.top = '0'
+            quote.style.bottom = ''
+            quote.style.left = '50%'
+            quote.style.transform = 'translateX(-50%)'
+          } else if (pinStart && !pinEnd) {
+            // Section is active — pin quote fixed at viewport center
+            quote.style.position = 'fixed'
+            quote.style.top = '50%'
+            quote.style.bottom = ''
+            quote.style.left = '50%'
+            quote.style.transform = 'translate(-50%, -50%)'
+          } else {
+            // Section has passed — lock quote to bottom of section
+            quote.style.position = 'absolute'
+            quote.style.top = ''
+            quote.style.bottom = '0'
+            quote.style.left = '50%'
+            quote.style.transform = 'translateX(-50%)'
+          }
+        }
+
+        // --- Word-by-word color reveal ---
+        if (stickySection) {
+          const rect = stickySection.getBoundingClientRect()
+          const vh = window.innerHeight
+          const sectionProgress = Math.min(1, Math.max(0,
+            (vh - rect.top) / (rect.height + vh)
+          ))
+
+          const totalWords = wordRefs.current.length
+          wordRefs.current.forEach((word, i) => {
+            const wordStart = (i / totalWords) * 0.55
+            const wordEnd = wordStart + (1 / totalWords) + 0.05
+            const wordProgress = Math.min(1, Math.max(0,
+              (sectionProgress - wordStart) / (wordEnd - wordStart)
+            ))
+            const opacity = 0.12 + (wordProgress * 0.88)
+            word.style.color = `rgba(237, 233, 225, ${opacity})`
+          })
+        }
+
         ticking = false
       })
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
     onScroll()
 
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
   }, [])
+
+  const quoteWords = QUOTE_TEXT.split(' ')
 
   return (
     <section id="gallery_preview" className="gallery-preview" ref={sectionRef}>
-      {/* Header — full screen centered intro */}
+      {/* Header */}
       <div className="container gallery-preview__header">
         <p className="section-eyebrow reveal">From the Collection</p>
         <h2 className="gallery-preview__title reveal">
@@ -85,7 +158,7 @@ export default function GalleryPreview() {
         </h2>
       </div>
 
-      {/* First image — appears before the quote */}
+      {/* First image */}
       <div className="gallery-alternating">
         <div
           className="gallery-row gallery-row--left"
@@ -97,24 +170,28 @@ export default function GalleryPreview() {
         </div>
       </div>
 
-      {/* Sticky quote section — quote stays centered while remaining images scroll */}
-      <div className="gallery-sticky-section">
+      {/* Sticky section: quote pinned via JS + images scroll past */}
+      <div className="gallery-sticky-section" ref={stickySectionRef}>
 
-        {/* Sticky quote (always visible, no fade) */}
-        <div className="gallery-quote-sticky">
+        {/* Quote — positioned via JS (absolute/fixed/absolute) */}
+        <div className="gallery-quote-js" ref={quoteRef}>
           <div className="gallery-center-icon" aria-hidden="true">✦</div>
           <blockquote className="gallery-center-text">
-            The Lord is my shepherd; I shall not want.
-            He maketh me to lie down in green pastures:
-            He leadeth me beside the still waters.
-            He restoreth my soul: He leadeth me in the
-            paths of righteousness for His name's sake.
+            {quoteWords.map((word, i) => (
+              <span
+                key={i}
+                ref={el => { if (el) wordRefs.current[i] = el }}
+                className="quote-word"
+              >
+                {word}{' '}
+              </span>
+            ))}
           </blockquote>
           <cite className="gallery-center-cite">Psalm 23:1–3</cite>
           <div className="gallery-center-line" aria-hidden="true" />
         </div>
 
-        {/* Remaining images scroll past the sticky quote */}
+        {/* Images scroll past the pinned quote */}
         <div className="gallery-alternating">
           {ALL_IMAGES.slice(1).map((img, i) => (
             <div

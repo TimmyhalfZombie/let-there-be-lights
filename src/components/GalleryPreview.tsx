@@ -141,7 +141,7 @@ export default function GalleryPreview() {
           className="gallery-row gallery-row--left"
           ref={el => { cardRefs.current[0] = el }}
         >
-          <a href="https://let-there-be-lights.org/biblegallery/gallery" className="gallery-card reveal">
+          <a href="https://let-there-be-lights.org/biblegallery/gallery?page=1&selected=7" target="_blank" rel="noopener noreferrer" className="gallery-card reveal">
             <img src={ALL_IMAGES[0].src} alt={ALL_IMAGES[0].title} loading="lazy" decoding="async" />
           </a>
         </div>
@@ -176,7 +176,7 @@ export default function GalleryPreview() {
               className={`gallery-row gallery-row--${(i + 1) % 2 === 0 ? 'left' : 'right'}`}
               ref={el => { cardRefs.current[i + 1] = el }}
             >
-              <a href="https://let-there-be-lights.org/biblegallery/gallery" className="gallery-card reveal">
+              <a href="https://let-there-be-lights.org/biblegallery/gallery" target="_blank" rel="noopener noreferrer" className="gallery-card reveal">
                 <img src={img.src} alt={img.title} loading="lazy" decoding="async" />
               </a>
             </div>

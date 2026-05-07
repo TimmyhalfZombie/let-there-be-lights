@@ -23,7 +23,9 @@ export default function MonthsNav() {
           {MONTHS.map((month, i) => (
             <a
               key={month}
-              href={`https://let-there-be-lights.org/biblegallery/gallery?page=1&selected=${i}`}
+              href={`https://let-there-be-lights.org/biblegallery/gallery?page=1&selected=${i + 1}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="month-pill"
               style={i === currentMonth ? {
                 borderColor: 'var(--gold)',

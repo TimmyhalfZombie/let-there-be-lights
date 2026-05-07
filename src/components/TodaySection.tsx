@@ -36,7 +36,7 @@ export default function TodaySection() {
         >
           <div className="today__image-wrap">
             <img
-              src="https://let-there-be-lights.org/picture/Let-Your-Light-Shine.jpg"
+              src="/images/Let-Your-Light-Shine.jpg"
               alt="Let Your Light Shine — a devotional image with an inspiring Scripture verse"
               loading="eager"
             />

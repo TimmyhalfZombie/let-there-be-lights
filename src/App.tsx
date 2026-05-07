@@ -9,7 +9,6 @@ import TodaySection from './components/TodaySection.tsx'
 import AboutSection from './components/AboutSection.tsx'
 import GalleryPreview from './components/GalleryPreview.tsx'
 import MonthsNav from './components/MonthsNav.tsx'
-import QuoteCallout from './components/QuoteCallout.tsx'
 import Footer from './components/Footer.tsx'
 
 export default function App() {
@@ -39,8 +38,6 @@ export default function App() {
         <GalleryPreview />
         <GoldDivider />
         <MonthsNav />
-        <GoldDivider />
-        <QuoteCallout />
       </main>
       <Footer />
     </>

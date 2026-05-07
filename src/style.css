@@ -491,19 +491,17 @@ button {
   width: clamp(240px, 30vw, 360px);
 }
 
-/* Sticky section — wraps quote + remaining images.
-   padding-bottom gives extra scroll room so quote stays after last image */
-.gallery-sticky-section {
+/* Scroll area — contains images + quote overlay */
+.gallery-scroll-area {
   position: relative;
-  padding-bottom: 80vh;
 }
 
-/* Quote — JS controls position and opacity */
-.gallery-quote-js {
-  position: fixed;
-  top: 50%;
+/* Quote — absolute, JS sets top each frame. No opacity changes. */
+.gallery-quote-pinned {
+  position: absolute;
+  top: 0;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -512,8 +510,7 @@ button {
   max-width: 480px;
   padding: 2rem 1rem;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  will-change: top;
 }
 
 .gallery-center-icon {
@@ -954,12 +951,13 @@ button {
     width: 100%;
   }
 
-  .gallery-quote-js {
-    position: static !important;
-    transform: none !important;
-    pointer-events: auto;
-    padding: 2rem 0;
+  .gallery-quote-pinned {
+    position: static;
+    transform: none;
+    left: auto;
+    padding: 2rem 1rem;
     max-width: 100%;
+    pointer-events: auto;
   }
 
   /* MONTHS horizontal scroll */

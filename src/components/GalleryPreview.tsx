@@ -14,7 +14,7 @@ const QUOTE_TEXT = "The Lord is my shepherd; I shall not want. He maketh me to l
 export default function GalleryPreview() {
   const sectionRef = useRef<HTMLElement>(null)
   const cardRefs = useRef<(HTMLElement | null)[]>([])
-  const stickySectionRef = useRef<HTMLDivElement>(null)
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
   const quoteRef = useRef<HTMLDivElement>(null)
   const wordRefs = useRef<HTMLSpanElement[]>([])
 
@@ -47,7 +47,7 @@ export default function GalleryPreview() {
     return () => revealElements.forEach(el => observer.unobserve(el))
   }, [])
 
-  // JS-driven: pin quote at center, zoom images, word-by-word reveal
+  // Scroll-driven effects
   useEffect(() => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (prefersReduced) {
@@ -62,10 +62,7 @@ export default function GalleryPreview() {
       ticking = true
 
       requestAnimationFrame(() => {
-        const stickySection = stickySectionRef.current
-        const quote = quoteRef.current
-
-        // --- Image zoom-out ---
+        // Image zoom-out
         cardRefs.current.forEach(card => {
           if (!card) return
           const img = card.querySelector('img') as HTMLImageElement | null
@@ -77,40 +74,28 @@ export default function GalleryPreview() {
           img.style.transform = `scale(${scale})`
         })
 
-        // --- JS-pinned quote (fixed only, fade in/out — no position switching) ---
-        if (stickySection && quote) {
-          const sectionRect = stickySection.getBoundingClientRect()
+        // Pin quote at center — pure top update, no opacity
+        const area = scrollAreaRef.current
+        const quote = quoteRef.current
+        if (area && quote) {
+          const areaRect = area.getBoundingClientRect()
           const vh = window.innerHeight
           const quoteH = quote.offsetHeight
+          const areaH = area.offsetHeight
 
-          const pinStart = sectionRect.top <= vh * 0.4
-          const pinEnd = sectionRect.bottom <= vh * 0.5 + quoteH
+          // Where top should be to keep quote visually at viewport center
+          const centeredTop = (vh / 2) - (quoteH / 2) - areaRect.top
 
-          // Always keep it fixed center — only change opacity
-          quote.style.position = 'fixed'
-          quote.style.top = '50%'
-          quote.style.left = '50%'
-          quote.style.transform = 'translate(-50%, -50%)'
+          // Clamp between 0 and (areaH - quoteH) so it scrolls away with the area
+          const maxTop = areaH - quoteH
+          const finalTop = Math.max(0, Math.min(centeredTop, maxTop))
 
-          if (!pinStart) {
-            // Before section — hidden
-            quote.style.opacity = '0'
-          } else if (pinStart && !pinEnd) {
-            // Section active — fully visible
-            quote.style.opacity = '1'
-          } else {
-            // Section ending — fade out smoothly
-            const fadeRange = vh * 0.3
-            const fadeProgress = Math.min(1, Math.max(0,
-              (vh * 0.5 + quoteH - sectionRect.bottom) / fadeRange
-            ))
-            quote.style.opacity = String(1 - fadeProgress)
-          }
+          quote.style.top = finalTop + 'px'
         }
 
-        // --- Word-by-word color reveal ---
-        if (stickySection) {
-          const rect = stickySection.getBoundingClientRect()
+        // Word-by-word color reveal
+        if (scrollAreaRef.current) {
+          const rect = scrollAreaRef.current.getBoundingClientRect()
           const vh = window.innerHeight
           const sectionProgress = Math.min(1, Math.max(0,
             (vh - rect.top) / (rect.height + vh)
@@ -133,13 +118,9 @@ export default function GalleryPreview() {
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
     onScroll()
 
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-    }
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   const quoteWords = QUOTE_TEXT.split(' ')
@@ -154,23 +135,11 @@ export default function GalleryPreview() {
         </h2>
       </div>
 
-      {/* First image */}
-      <div className="gallery-alternating">
-        <div
-          className="gallery-row gallery-row--left"
-          ref={el => { cardRefs.current[0] = el }}
-        >
-          <a href="https://let-there-be-lights.org/biblegallery/gallery" className="gallery-card reveal">
-            <img src={ALL_IMAGES[0].src} alt={ALL_IMAGES[0].title} loading="lazy" decoding="async" />
-          </a>
-        </div>
-      </div>
+      {/* Scroll area: images + quote overlay */}
+      <div className="gallery-scroll-area" ref={scrollAreaRef}>
 
-      {/* Sticky section: quote pinned via JS + images scroll past */}
-      <div className="gallery-sticky-section" ref={stickySectionRef}>
-
-        {/* Quote — positioned via JS (absolute/fixed/absolute) */}
-        <div className="gallery-quote-js" ref={quoteRef}>
+        {/* Quote — absolute, JS updates top. Scrolls away with area. */}
+        <div className="gallery-quote-pinned" ref={quoteRef}>
           <div className="gallery-center-icon" aria-hidden="true">✦</div>
           <blockquote className="gallery-center-text">
             {quoteWords.map((word, i) => (
@@ -187,13 +156,13 @@ export default function GalleryPreview() {
           <div className="gallery-center-line" aria-hidden="true" />
         </div>
 
-        {/* Images scroll past the pinned quote */}
+        {/* Images in normal flow — define the scroll height */}
         <div className="gallery-alternating">
-          {ALL_IMAGES.slice(1).map((img, i) => (
+          {ALL_IMAGES.map((img, i) => (
             <div
               key={img.title}
-              className={`gallery-row gallery-row--${(i + 1) % 2 === 0 ? 'left' : 'right'}`}
-              ref={el => { cardRefs.current[i + 1] = el }}
+              className={`gallery-row gallery-row--${i % 2 === 0 ? 'left' : 'right'}`}
+              ref={el => { cardRefs.current[i] = el }}
             >
               <a href="https://let-there-be-lights.org/biblegallery/gallery" className="gallery-card reveal">
                 <img src={img.src} alt={img.title} loading="lazy" decoding="async" />
@@ -201,6 +170,9 @@ export default function GalleryPreview() {
             </div>
           ))}
         </div>
+
+        {/* Extra height so quote stays centered after last image */}
+        <div style={{ height: '60vh' }} />
       </div>
 
       {/* Footer CTA */}

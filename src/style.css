@@ -474,7 +474,7 @@ button {
 /* Each image row — tall spacing so only ONE image is visible at a time */
 .gallery-row {
   display: flex;
-  padding: clamp(100px, 30vh, 300px) 0;
+  padding: clamp(40px, 15vh, 120px) 0;
 }
 
 .gallery-row--left {

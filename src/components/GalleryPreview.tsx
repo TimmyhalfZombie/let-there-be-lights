@@ -135,7 +135,19 @@ export default function GalleryPreview() {
         </h2>
       </div>
 
-      {/* Scroll area: images + quote overlay */}
+      {/* First image — before the scroll area */}
+      <div className="gallery-alternating">
+        <div
+          className="gallery-row gallery-row--left"
+          ref={el => { cardRefs.current[0] = el }}
+        >
+          <a href="https://let-there-be-lights.org/biblegallery/gallery" className="gallery-card reveal">
+            <img src={ALL_IMAGES[0].src} alt={ALL_IMAGES[0].title} loading="lazy" decoding="async" />
+          </a>
+        </div>
+      </div>
+
+      {/* Scroll area: quote overlay + remaining images */}
       <div className="gallery-scroll-area" ref={scrollAreaRef}>
 
         {/* Quote — absolute, JS updates top. Scrolls away with area. */}
@@ -156,13 +168,13 @@ export default function GalleryPreview() {
           <div className="gallery-center-line" aria-hidden="true" />
         </div>
 
-        {/* Images in normal flow — define the scroll height */}
+        {/* Remaining images — define the scroll height */}
         <div className="gallery-alternating">
-          {ALL_IMAGES.map((img, i) => (
+          {ALL_IMAGES.slice(1).map((img, i) => (
             <div
               key={img.title}
-              className={`gallery-row gallery-row--${i % 2 === 0 ? 'left' : 'right'}`}
-              ref={el => { cardRefs.current[i] = el }}
+              className={`gallery-row gallery-row--${(i + 1) % 2 === 0 ? 'left' : 'right'}`}
+              ref={el => { cardRefs.current[i + 1] = el }}
             >
               <a href="https://let-there-be-lights.org/biblegallery/gallery" className="gallery-card reveal">
                 <img src={img.src} alt={img.title} loading="lazy" decoding="async" />

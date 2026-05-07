@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback } from 'react'
+import { useRef, useEffect } from 'react'
 
 const ALL_IMAGES = [
   { src: '/images/Let-Your-Light-Shine.jpg', title: 'Let Your Light Shine', day: 'Jul 13' },
@@ -11,11 +11,9 @@ const ALL_IMAGES = [
 
 export default function GalleryPreview() {
   const sectionRef = useRef<HTMLElement>(null)
-  const headerRef = useRef<HTMLDivElement>(null)
   const cardRefs = useRef<(HTMLElement | null)[]>([])
-  const [headerGone, setHeaderGone] = useState(false)
 
-  // Observe ALL .reveal elements
+  // Observe .reveal elements
   useEffect(() => {
     const section = sectionRef.current
     if (!section) return
@@ -44,21 +42,7 @@ export default function GalleryPreview() {
     return () => revealElements.forEach(el => observer.unobserve(el))
   }, [])
 
-  // Watch header — hide center quote while header is visible
-  useEffect(() => {
-    const header = headerRef.current
-    if (!header) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => setHeaderGone(!entry.isIntersecting),
-      { threshold: 0 }
-    )
-
-    observer.observe(header)
-    return () => observer.unobserve(header)
-  }, [])
-
-  // Scroll-driven zoom-out: images start at scale(1.15) and zoom to scale(1) as they scroll through viewport
+  // Scroll-driven zoom-out on images
   useEffect(() => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (prefersReduced) return
@@ -77,11 +61,7 @@ export default function GalleryPreview() {
 
           const rect = card.getBoundingClientRect()
           const vh = window.innerHeight
-
-          // Progress: 0 = just entered bottom, 1 = fully past top
           const progress = Math.min(1, Math.max(0, 1 - (rect.top / vh)))
-
-          // Scale from 1.18 → 1.0 as progress goes 0 → 1
           const scale = 1.18 - (progress * 0.18)
           img.style.transform = `scale(${scale})`
         })
@@ -90,56 +70,64 @@ export default function GalleryPreview() {
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })
-    onScroll() // initial calc
+    onScroll()
 
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   return (
     <section id="gallery_preview" className="gallery-preview" ref={sectionRef}>
-      {/* Header — scrolls normally */}
-      <div className="container gallery-preview__header" ref={headerRef}>
+      {/* Header — full screen centered intro */}
+      <div className="container gallery-preview__header">
         <p className="section-eyebrow reveal">From the Collection</p>
         <h2 className="gallery-preview__title reveal">
           Open any day.<br /><em>Find your light.</em>
         </h2>
       </div>
 
-      {/* Alternating image rows with sticky center text */}
+      {/* First image — appears before the quote */}
       <div className="gallery-alternating">
+        <div
+          className="gallery-row gallery-row--left"
+          ref={el => { cardRefs.current[0] = el }}
+        >
+          <a href="https://let-there-be-lights.org/biblegallery/gallery" className="gallery-card reveal">
+            <img src={ALL_IMAGES[0].src} alt={ALL_IMAGES[0].title} loading="lazy" decoding="async" />
+          </a>
+        </div>
+      </div>
 
-        {/* Sticky center quote */}
-        <div className={`gallery-center-quote${headerGone ? ' is-visible' : ''}`}>
-          <div className="gallery-center-inner">
-            <div className="gallery-center-icon" aria-hidden="true">✦</div>
-            <blockquote className="gallery-center-text">
-              The Lord is my shepherd; I shall not want.
-              He maketh me to lie down in green pastures:
-              He leadeth me beside the still waters.
-              He restoreth my soul: He leadeth me in the
-              paths of righteousness for His name's sake.
-            </blockquote>
-            <cite className="gallery-center-cite">Psalm 23:1–3</cite>
-            <div className="gallery-center-line" aria-hidden="true" />
-          </div>
+      {/* Sticky quote section — quote stays centered while remaining images scroll */}
+      <div className="gallery-sticky-section">
+
+        {/* Sticky quote (always visible, no fade) */}
+        <div className="gallery-quote-sticky">
+          <div className="gallery-center-icon" aria-hidden="true">✦</div>
+          <blockquote className="gallery-center-text">
+            The Lord is my shepherd; I shall not want.
+            He maketh me to lie down in green pastures:
+            He leadeth me beside the still waters.
+            He restoreth my soul: He leadeth me in the
+            paths of righteousness for His name's sake.
+          </blockquote>
+          <cite className="gallery-center-cite">Psalm 23:1–3</cite>
+          <div className="gallery-center-line" aria-hidden="true" />
         </div>
 
-        {/* Images — one per row, alternating left/right, flush to edges */}
-        {ALL_IMAGES.map((img, i) => (
-          <div
-            key={img.title}
-            className={`gallery-row gallery-row--${i % 2 === 0 ? 'left' : 'right'}`}
-            ref={el => { cardRefs.current[i] = el }}
-          >
-            <a
-              href="https://let-there-be-lights.org/biblegallery/gallery"
-              className="gallery-card reveal"
+        {/* Remaining images scroll past the sticky quote */}
+        <div className="gallery-alternating">
+          {ALL_IMAGES.slice(1).map((img, i) => (
+            <div
+              key={img.title}
+              className={`gallery-row gallery-row--${(i + 1) % 2 === 0 ? 'left' : 'right'}`}
+              ref={el => { cardRefs.current[i + 1] = el }}
             >
-              <img src={img.src} alt={img.title} loading="lazy" decoding="async" />
-            </a>
-          </div>
-        ))}
-
+              <a href="https://let-there-be-lights.org/biblegallery/gallery" className="gallery-card reveal">
+                <img src={img.src} alt={img.title} loading="lazy" decoding="async" />
+              </a>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Footer CTA */}

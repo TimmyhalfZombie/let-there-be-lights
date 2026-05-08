@@ -632,6 +632,7 @@ button {
 .gallery-preview {
   position: relative;
   /* overflow: hidden removed so sticky works */
+  clip-path: inset(0);
   padding: var(--section-py) 0;
 }
 

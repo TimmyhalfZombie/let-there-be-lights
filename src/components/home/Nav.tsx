@@ -52,9 +52,10 @@ export default function Nav() {
       </button>
 
       <ul className={`nav__links${menuOpen ? ' open' : ''}`} id="navLinks">
+        <li><Link to="/" onClick={closeMenu}>Home</Link></li>
         <li><Link to="/about" onClick={closeMenu}>About</Link></li>
-        <li><a href="#gallery_preview" onClick={closeMenu}>Gallery</a></li>
-        <li><a href="https://let-there-be-lights.org/site/contact" onClick={closeMenu}>Contact</a></li>
+        <li><a href="https://let-there-be-lights.org/biblegallery/gallery" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>Gallery</a></li>
+        <li><a href="https://let-there-be-lights.org/site/contact" target="_blank" rel="noopener noreferrer" onClick={closeMenu}>Contact</a></li>
       </ul>
     </nav>
   )

@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 
 const ALL_IMAGES = [
   { src: '/images/Let-Your-Light-Shine.jpg', title: 'Let Your Light Shine', day: 'Jul 13' },
@@ -11,12 +11,23 @@ const ALL_IMAGES = [
 
 const QUOTE_TEXT = "The Lord is my shepherd; I shall not want. He maketh me to lie down in green pastures: He leadeth me beside the still waters. He restoreth my soul: He leadeth me in the paths of righteousness for His name's sake."
 
+const MOBILE_BREAKPOINT = 1024
+
 export default function GalleryPreview() {
   const sectionRef = useRef<HTMLElement>(null)
   const cardRefs = useRef<(HTMLElement | null)[]>([])
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const quoteRef = useRef<HTMLDivElement>(null)
   const wordRefs = useRef<HTMLSpanElement[]>([])
+
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= MOBILE_BREAKPOINT)
+
+  // Track viewport size
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   // Observe .reveal elements
   useEffect(() => {
@@ -45,10 +56,12 @@ export default function GalleryPreview() {
 
     revealElements.forEach(el => observer.observe(el))
     return () => revealElements.forEach(el => observer.unobserve(el))
-  }, [])
+  }, [isMobile])
 
-  // Scroll-driven effects
+  // Scroll-driven effects — desktop only
   useEffect(() => {
+    if (isMobile) return
+
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (prefersReduced) {
       wordRefs.current.forEach(w => { w.style.color = 'var(--text)' })
@@ -74,7 +87,7 @@ export default function GalleryPreview() {
           img.style.transform = `scale(${scale})`
         })
 
-        // Pin quote at center — pure top update, no opacity
+        // Pin quote at center
         const area = scrollAreaRef.current
         const quote = quoteRef.current
         if (area && quote) {
@@ -82,14 +95,9 @@ export default function GalleryPreview() {
           const vh = window.innerHeight
           const quoteH = quote.offsetHeight
           const areaH = area.offsetHeight
-
-          // Where top should be to keep quote visually at viewport center
           const centeredTop = (vh / 2) - (quoteH / 2) - areaRect.top
-
-          // Clamp between 0 and (areaH - quoteH) so it scrolls away with the area
           const maxTop = areaH - quoteH
           const finalTop = Math.max(0, Math.min(centeredTop, maxTop))
-
           quote.style.top = finalTop + 'px'
         }
 
@@ -121,7 +129,7 @@ export default function GalleryPreview() {
     onScroll()
 
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [isMobile])
 
   const quoteWords = QUOTE_TEXT.split(' ')
 
@@ -135,57 +143,67 @@ export default function GalleryPreview() {
         </h2>
       </div>
 
-      {/* First image — before the scroll area */}
-      <div className="gallery-alternating">
-        <div
-          className="gallery-row gallery-row--left"
-          ref={el => { cardRefs.current[0] = el }}
-        >
-          <a href="https://let-there-be-lights.org/biblegallery/gallery?page=1&selected=7" target="_blank" rel="noopener noreferrer" className="gallery-card reveal">
-            <img src={ALL_IMAGES[0].src} alt={ALL_IMAGES[0].title} loading="lazy" decoding="async" />
-          </a>
-        </div>
-      </div>
-
-      {/* Scroll area: quote overlay + remaining images */}
-      <div className="gallery-scroll-area" ref={scrollAreaRef}>
-
-        {/* Quote — absolute, JS updates top. Scrolls away with area. */}
-        <div className="gallery-quote-pinned" ref={quoteRef}>
-          <div className="gallery-center-icon" aria-hidden="true">✦</div>
-          <blockquote className="gallery-center-text">
-            {quoteWords.map((word, i) => (
-              <span
-                key={i}
-                ref={el => { if (el) wordRefs.current[i] = el }}
-                className="quote-word"
-              >
-                {word}{' '}
-              </span>
-            ))}
-          </blockquote>
-          <cite className="gallery-center-cite">Psalm 23:1–3</cite>
-          <div className="gallery-center-line" aria-hidden="true" />
-        </div>
-
-        {/* Remaining images — define the scroll height */}
-        <div className="gallery-alternating">
-          {ALL_IMAGES.slice(1).map((img, i) => (
+      {/* Images + scroll area — desktop only */}
+      {!isMobile && (
+        <>
+          <div className="gallery-alternating">
             <div
-              key={img.title}
-              className={`gallery-row gallery-row--${(i + 1) % 2 === 0 ? 'left' : 'right'}`}
-              ref={el => { cardRefs.current[i + 1] = el }}
+              className="gallery-row gallery-row--left"
+              ref={el => { cardRefs.current[0] = el }}
             >
-              <a href="https://let-there-be-lights.org/biblegallery/gallery" target="_blank" rel="noopener noreferrer" className="gallery-card reveal">
-                <img src={img.src} alt={img.title} loading="lazy" decoding="async" />
+              <a href="https://let-there-be-lights.org/biblegallery/gallery?page=1&selected=7" target="_blank" rel="noopener noreferrer" className="gallery-card reveal">
+                <img src={ALL_IMAGES[0].src} alt={ALL_IMAGES[0].title} loading="lazy" decoding="async" />
               </a>
             </div>
-          ))}
-        </div>
+          </div>
 
-        {/* Extra height so quote stays centered after last image */}
-        <div style={{ height: '60vh' }} />
-      </div>
+          <div className="gallery-scroll-area" ref={scrollAreaRef}>
+            <div className="gallery-quote-pinned" ref={quoteRef}>
+              <div className="gallery-center-icon" aria-hidden="true">✦</div>
+              <blockquote className="gallery-center-text">
+                {quoteWords.map((word, i) => (
+                  <span
+                    key={i}
+                    ref={el => { if (el) wordRefs.current[i] = el }}
+                    className="quote-word"
+                  >
+                    {word}{' '}
+                  </span>
+                ))}
+              </blockquote>
+              <cite className="gallery-center-cite">Psalm 23:1–3</cite>
+              <div className="gallery-center-line" aria-hidden="true" />
+            </div>
+
+            <div className="gallery-alternating">
+              {ALL_IMAGES.slice(1).map((img, i) => (
+                <div
+                  key={img.title}
+                  className={`gallery-row gallery-row--${(i + 1) % 2 === 0 ? 'left' : 'right'}`}
+                  ref={el => { cardRefs.current[i + 1] = el }}
+                >
+                  <a href="https://let-there-be-lights.org/biblegallery/gallery" target="_blank" rel="noopener noreferrer" className="gallery-card reveal">
+                    <img src={img.src} alt={img.title} loading="lazy" decoding="async" />
+                  </a>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ height: '60vh' }} />
+          </div>
+        </>
+      )}
+
+      {/* Mobile: just show the verse */}
+      {isMobile && (
+        <div className="gallery-mobile-quote">
+          <div className="gallery-center-icon" aria-hidden="true">✦</div>
+          <blockquote className="gallery-center-text">
+            {QUOTE_TEXT}
+          </blockquote>
+          <cite className="gallery-center-cite">Psalm 23:1–3</cite>
+        </div>
+      )}
 
       {/* Footer CTA */}
       <div className="container">

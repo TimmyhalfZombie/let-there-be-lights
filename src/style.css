@@ -886,7 +886,7 @@ canvas#radiance-bg {
 .months-nav__row {
   position: relative;
   overflow: hidden;
-  max-width: var(--container-max);
+  max-width: 900px;
   margin: 0 auto;
   -webkit-mask-image: linear-gradient(to right,
       transparent 0%,

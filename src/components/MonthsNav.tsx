@@ -19,22 +19,24 @@ export default function MonthsNav() {
         <p ref={subtitleRef} className="months-nav__subtitle reveal">
           Each month holds a chapter of wisdom.
         </p>
-        <div ref={rowRef} className="months-nav__row reveal" id="monthsRow">
-          {MONTHS.map((month, i) => (
-            <a
-              key={month}
-              href={`https://let-there-be-lights.org/biblegallery/gallery?page=1&selected=${i + 1}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="month-pill"
-              style={i === currentMonth ? {
-                borderColor: 'var(--gold)',
-                color: 'var(--gold)',
-                background: 'var(--gold-glow)',
-              } : undefined}
-            >
-              {month}
-            </a>
+      </div>
+      <div ref={rowRef} className="months-nav__row reveal" id="monthsRow">
+        <div className="months-marquee">
+          {/* Render 3 copies for seamless infinite loop */}
+          {[0, 1, 2].map((copy) => (
+            <div className="months-marquee__set" key={copy} aria-hidden={copy > 0}>
+              {MONTHS.map((month, i) => (
+                <a
+                  key={`${copy}-${month}`}
+                  href={`https://let-there-be-lights.org/biblegallery/gallery?page=1&selected=${i + 1}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`month-pill${i === currentMonth ? ' month-pill--active' : ''}`}
+                >
+                  {month}
+                </a>
+              ))}
+            </div>
           ))}
         </div>
       </div>

@@ -322,6 +322,7 @@ button {
   opacity: 0.4;
   position: relative;
   overflow: hidden;
+  z-index: 10;
 }
 
 .gold-divider::after {
@@ -863,6 +864,8 @@ canvas#radiance-bg {
   background: var(--bg);
   padding: var(--section-py) 0;
   text-align: center;
+  position: relative;
+  z-index: 10;
 }
 
 .months-nav__title {

@@ -332,7 +332,7 @@ export default function GalleryPreview() {
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div className="gallery-preview__cta-wrap reveal">
           <a href="https://let-there-be-lights.org/biblegallery/gallery" className="gallery-preview__cta">
-            View All 365 →
+            View All →
           </a>
         </div>
       </div>

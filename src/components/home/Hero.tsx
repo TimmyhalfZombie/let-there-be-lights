@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import AppStoreButtons from '../sharable/button'
 
 /* ── Particle Canvas ────────────────────────────── */
 
@@ -138,10 +139,9 @@ export default function Hero() {
         <div className="hero-divider" aria-hidden="true" />
 
         {/* CTA Button */}
-        <a href="https://let-there-be-lights.org/biblegallery/gallery"
-           className="hero__cta hero-cta">
-          Explore the Gallery
-        </a>
+        <div className="hero__cta-wrapper hero-cta" style={{ display: 'flex', justifyContent: 'center' }}>
+          <AppStoreButtons style={{ margin: 0 }} />
+        </div>
       </div>
     </section>
   )

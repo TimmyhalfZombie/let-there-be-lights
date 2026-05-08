@@ -48,9 +48,7 @@ export default function AboutSection() {
     target: sectionRef,
     offset: ['start end', 'end start'],
   })
-  const statY = useTransform(scrollYProgress, [0, 1], [80, -40])
   const textY = useTransform(scrollYProgress, [0, 1], [40, -20])
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.92, 1, 0.97])
 
   return (
     <section id="about" className="about" ref={sectionRef}>

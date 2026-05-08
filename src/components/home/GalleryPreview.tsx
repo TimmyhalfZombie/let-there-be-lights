@@ -60,29 +60,47 @@ function useDivineRadiance(canvasRef: React.RefObject<HTMLCanvasElement | null>,
       ctx.fillStyle = '#07070F'
       ctx.fillRect(0, 0, w, h)
 
+      const isDesktop = w > 1024
+      const radiusMult = isDesktop ? 1.15 : 1.0
+
       const pulse = 0.5 + 0.5 * Math.sin(t * 0.012)
+      const vh = window.innerHeight
+      const minDim = Math.min(w, isDesktop ? vh : h)
 
       // Outer glow
-      const r1 = Math.min(w, h) * 0.55 * (0.9 + 0.1 * pulse)
+      const r1 = minDim * 0.55 * radiusMult * (0.9 + 0.1 * pulse)
       const g1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, r1)
-      g1.addColorStop(0, 'rgba(180,130,40,0.13)')
-      g1.addColorStop(0.35, 'rgba(160,110,30,0.07)')
+      if (isDesktop) {
+        g1.addColorStop(0, 'rgba(230, 180, 80, 0.25)')
+        g1.addColorStop(0.35, 'rgba(210, 160, 60, 0.12)')
+      } else {
+        g1.addColorStop(0, 'rgba(180, 130, 40, 0.13)')
+        g1.addColorStop(0.35, 'rgba(160, 110, 30, 0.07)')
+      }
       g1.addColorStop(1, 'rgba(0,0,0,0)')
       ctx.fillStyle = g1
       ctx.fillRect(0, 0, w, h)
 
       // Inner glow
-      const r2 = Math.min(w, h) * 0.25 * (0.9 + 0.1 * pulse)
+      const r2 = minDim * 0.25 * radiusMult * (0.9 + 0.1 * pulse)
       const g2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, r2)
-      g2.addColorStop(0, 'rgba(220,170,60,0.10)')
+      if (isDesktop) {
+        g2.addColorStop(0, 'rgba(255, 220, 120, 0.25)')
+      } else {
+        g2.addColorStop(0, 'rgba(220, 170, 60, 0.10)')
+      }
       g2.addColorStop(1, 'rgba(0,0,0,0)')
       ctx.fillStyle = g2
       ctx.fillRect(0, 0, w, h)
 
       // Concentric rings
       for (let i = 3; i >= 1; i--) {
-        const rr = Math.min(w, h) * (0.12 * i) * (0.95 + 0.05 * Math.sin(t * 0.015 + i))
-        ctx.strokeStyle = `rgba(201,168,76,${0.025 / i})`
+        const rr = minDim * (0.12 * i) * radiusMult * (0.95 + 0.05 * Math.sin(t * 0.015 + i))
+        if (isDesktop) {
+          ctx.strokeStyle = `rgba(230, 190, 100, ${0.05 / i})`
+        } else {
+          ctx.strokeStyle = `rgba(201, 168, 76, ${0.025 / i})`
+        }
         ctx.lineWidth = i === 1 ? 1.5 : 1
         ctx.beginPath()
         ctx.arc(cx, cy, rr, 0, Math.PI * 2)

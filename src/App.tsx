@@ -17,6 +17,12 @@ export default function App() {
 
   // Initialize animations on mount
   useEffect(() => {
+    // Force scroll to top on reload so hero animation always starts at the top
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual'
+    }
+    window.scrollTo(0, 0)
+
     // Luxury curtain-reveal hero entrance
     playHeroEntrance()
 

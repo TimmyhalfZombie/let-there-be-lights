@@ -75,19 +75,7 @@ export default function AboutSection() {
 
           <div className="line-wrap">
             <div className="line-inner app-links-wrapper">
-              <AppStoreButtons />
-
-              <div className="app-links-secondary">
-                <div className="app-links-line"></div>
-                <a href="https://let-there-be-lights.org/biblegallery/gallery" className="about__cta about__cta--secondary">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="external-icon">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                    <polyline points="15 3 21 3 21 9"></polyline>
-                    <line x1="10" y1="14" x2="21" y2="3"></line>
-                  </svg>
-                  Explore the Gallery
-                </a>
-              </div>
+              <AppStoreButtons showExploreGallery />
             </div>
           </div>
         </motion.div>

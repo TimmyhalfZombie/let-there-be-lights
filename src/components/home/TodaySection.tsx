@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useScrollReveal } from '../../hooks/useScrollReveal.ts'
+import { ExploreGalleryButton } from '../sharable/button'
 
 export default function TodaySection() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -46,12 +47,7 @@ export default function TodaySection() {
             <p className="today__prompt">
               Take a moment. Breathe. Let this truth settle.
             </p>
-            <a
-              href="https://let-there-be-lights.org/biblegallery/gallery"
-              className="today__link"
-            >
-              Open the Gallery →
-            </a>
+            <ExploreGalleryButton />
           </div>
         </motion.div>
       </div>

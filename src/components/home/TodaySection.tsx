@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useScrollReveal } from '../hooks/useScrollReveal.ts'
+import { useScrollReveal } from '../../hooks/useScrollReveal.ts'
 
 export default function TodaySection() {
   const sectionRef = useRef<HTMLElement>(null)

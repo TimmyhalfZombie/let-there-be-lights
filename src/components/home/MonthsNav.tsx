@@ -1,5 +1,5 @@
 import { useRef, useMemo } from 'react'
-import { useScrollReveal } from '../hooks/useScrollReveal.ts'
+import { useScrollReveal } from '../../hooks/useScrollReveal.ts'
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 

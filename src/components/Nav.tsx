@@ -29,7 +29,17 @@ export default function Nav() {
       className={`nav${scrolled ? ' scrolled' : ''}`}
       aria-label="Main navigation"
     >
-      <a href="/" className="nav__logo">Let There Be Lights</a>
+      <a 
+        href="#hero" 
+        className="nav__logo"
+        onClick={(e) => {
+          e.preventDefault()
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+          closeMenu()
+        }}
+      >
+        Let There Be Lights
+      </a>
 
       <button
         className={`nav__hamburger${menuOpen ? ' active' : ''}`}

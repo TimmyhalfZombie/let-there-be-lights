@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
@@ -29,17 +30,16 @@ export default function Nav() {
       className={`nav${scrolled ? ' scrolled' : ''}`}
       aria-label="Main navigation"
     >
-      <a 
-        href="#hero" 
+      <Link 
+        to="/" 
         className="nav__logo"
-        onClick={(e) => {
-          e.preventDefault()
+        onClick={() => {
           window.scrollTo({ top: 0, behavior: 'smooth' })
           closeMenu()
         }}
       >
         Let There Be Lights
-      </a>
+      </Link>
 
       <button
         className={`nav__hamburger${menuOpen ? ' active' : ''}`}
@@ -52,7 +52,7 @@ export default function Nav() {
       </button>
 
       <ul className={`nav__links${menuOpen ? ' open' : ''}`} id="navLinks">
-        <li><a href="#about" onClick={closeMenu}>About</a></li>
+        <li><Link to="/about" onClick={closeMenu}>About</Link></li>
         <li><a href="#gallery_preview" onClick={closeMenu}>Gallery</a></li>
         <li><a href="https://let-there-be-lights.org/site/contact" onClick={closeMenu}>Contact</a></li>
       </ul>

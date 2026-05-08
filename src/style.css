@@ -86,6 +86,7 @@ button {
 
 /* ---------- UTILITIES ---------- */
 .container {
+  width: 100%;
   max-width: var(--container-max);
   margin: 0 auto;
   padding-left: var(--container-px);
@@ -404,7 +405,11 @@ button {
    ============================================ */
 .about {
   background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
   padding: var(--section-py) 0;
+  width: 100%;
 }
 
 .about__grid {
@@ -414,24 +419,33 @@ button {
   align-items: center;
 }
 
+.about__stat {
+  position: relative;
+  top: -4rem;
+  /* Change this to move it higher or lower */
+}
+
 .about__number {
   display: block;
   font-family: var(--font-display);
-  font-size: clamp(5rem, 15vw, 12rem);
+  font-size: clamp(8rem, 20vw, 16rem);
   font-weight: 300;
-  color: var(--bg-surface);
-  -webkit-text-stroke: 1px var(--gold-muted);
-  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--gold);
+  line-height: 0.85;
 }
 
 .about__unit {
   display: block;
   font-family: var(--font-body);
-  font-size: 0.78rem;
-  letter-spacing: 0.2em;
+  font-size: 0.85rem;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: var(--gold-muted);
-  margin-top: 0.5rem;
+  color: var(--gold);
+  margin-top: 1.5rem;
+  text-align: left;
+  padding-left: 2rem;
+  /* Pushes it slightly inward under the 3 */
 }
 
 .about__title {

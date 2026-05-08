@@ -536,18 +536,19 @@ button {
   align-items: center;
   gap: 16px;
   padding: 12px 24px 12px 20px;
-  border: 1px solid var(--gold);
+  border: 1px solid #C9A84C;
   border-radius: 6px;
-  background: transparent;
+  background: #C9A84C;
   transition: var(--transition);
 }
 
 .app-store-btn:hover {
-  background: var(--gold-glow);
+  background: #d4b55e;
+  border-color: #d4b55e;
 }
 
 .app-store-btn__icon {
-  color: var(--gold);
+  color: #07070F;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -562,7 +563,7 @@ button {
 .app-store-btn__sub {
   font-family: var(--font-body);
   font-size: 0.65rem;
-  color: var(--gold-muted);
+  color: rgba(7, 7, 15, 0.6);
   letter-spacing: 0.05em;
   margin-bottom: 2px;
 }
@@ -570,7 +571,7 @@ button {
 .app-store-btn__main {
   font-family: var(--font-display);
   font-size: 1.1rem;
-  color: var(--text);
+  color: #07070F;
   letter-spacing: 0.02em;
   line-height: 1;
 }
@@ -629,8 +630,29 @@ button {
    GALLERY PREVIEW — Sticky-scroll layout
    ============================================ */
 .gallery-preview {
-  background: var(--bg-surface);
+  position: relative;
+  /* overflow: hidden removed so sticky works */
   padding: var(--section-py) 0;
+}
+
+/* Divine Radiance canvas */
+canvas#radiance-bg {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  margin-bottom: -100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 1024px) {
+  canvas#radiance-bg {
+    position: absolute;
+    height: 100%;
+    margin-bottom: 0;
+  }
 }
 
 /* Alternating layout: images one at a time */
@@ -1580,6 +1602,48 @@ button {
     margin-right: auto;
   }
 
+  /* APP BUTTONS — solid gold fill on mobile */
+  .app-links-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .app-store-btn {
+    padding: 10px 14px 10px 12px !important;
+    gap: 10px !important;
+    flex: 1;
+    min-width: 0;
+    background: #C9A84C !important;
+    border: 1px solid #C9A84C !important;
+  }
+
+  .app-store-btn:hover {
+    background: #C9A84C !important;
+  }
+
+  .app-store-btn__icon {
+    color: #07070F !important;
+  }
+
+  .app-store-btn__sub {
+    color: rgba(7, 7, 15, 0.6) !important;
+  }
+
+  .app-store-btn__main {
+    font-size: 0.9rem !important;
+    color: #07070F !important;
+  }
+
+  .app-store-btn__icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .app-links-secondary {
+    justify-content: center;
+  }
 
   /* MONTHS — slower marquee on mobile */
   .months-marquee {

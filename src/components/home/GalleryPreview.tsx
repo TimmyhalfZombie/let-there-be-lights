@@ -13,8 +13,107 @@ const QUOTE_TEXT = "The Lord is my shepherd; I shall not want. He maketh me to l
 
 const MOBILE_BREAKPOINT = 1024
 
+function useDivineRadiance(canvasRef: React.RefObject<HTMLCanvasElement | null>, sectionRef: React.RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const section = sectionRef.current
+    if (!canvas || !section) return
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    // Start invisible
+    canvas.style.opacity = '0'
+    canvas.style.transition = 'opacity 1.8s ease'
+
+    // Resize handler
+    function resize() {
+      if (!canvas) return
+      canvas.width = canvas.offsetWidth
+      canvas.height = canvas.offsetHeight
+    }
+    resize()
+    window.addEventListener('resize', resize)
+
+    // Fade-in on viewport entry
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          canvas!.style.opacity = '1'
+          observer.unobserve(entry.target)
+        }
+      })
+    }, { threshold: 0, rootMargin: '0px' })
+    observer.observe(section)
+
+    // Animation loop
+    let t = 0
+    let animId: number
+
+    function draw() {
+      if (!canvas || !ctx) return
+      const w = canvas.width, h = canvas.height
+      const cx = w / 2, cy = h / 2
+
+      ctx.clearRect(0, 0, w, h)
+
+      ctx.fillStyle = '#07070F'
+      ctx.fillRect(0, 0, w, h)
+
+      const pulse = 0.5 + 0.5 * Math.sin(t * 0.012)
+
+      // Outer glow
+      const r1 = Math.min(w, h) * 0.55 * (0.9 + 0.1 * pulse)
+      const g1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, r1)
+      g1.addColorStop(0, 'rgba(180,130,40,0.13)')
+      g1.addColorStop(0.35, 'rgba(160,110,30,0.07)')
+      g1.addColorStop(1, 'rgba(0,0,0,0)')
+      ctx.fillStyle = g1
+      ctx.fillRect(0, 0, w, h)
+
+      // Inner glow
+      const r2 = Math.min(w, h) * 0.25 * (0.9 + 0.1 * pulse)
+      const g2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, r2)
+      g2.addColorStop(0, 'rgba(220,170,60,0.10)')
+      g2.addColorStop(1, 'rgba(0,0,0,0)')
+      ctx.fillStyle = g2
+      ctx.fillRect(0, 0, w, h)
+
+      // Concentric rings
+      for (let i = 3; i >= 1; i--) {
+        const rr = Math.min(w, h) * (0.12 * i) * (0.95 + 0.05 * Math.sin(t * 0.015 + i))
+        ctx.strokeStyle = `rgba(201,168,76,${0.025 / i})`
+        ctx.lineWidth = i === 1 ? 1.5 : 1
+        ctx.beginPath()
+        ctx.arc(cx, cy, rr, 0, Math.PI * 2)
+        ctx.stroke()
+      }
+
+      t++
+      animId = requestAnimationFrame(draw)
+    }
+
+    // Pause when tab hidden
+    function onVisibilityChange() {
+      if (document.hidden) cancelAnimationFrame(animId)
+      else draw()
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange)
+
+    draw()
+
+    return () => {
+      cancelAnimationFrame(animId)
+      window.removeEventListener('resize', resize)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+      observer.disconnect()
+    }
+  }, [canvasRef, sectionRef])
+}
+
 export default function GalleryPreview() {
   const sectionRef = useRef<HTMLElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const cardRefs = useRef<(HTMLElement | null)[]>([])
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const quoteRef = useRef<HTMLDivElement>(null)
@@ -28,6 +127,9 @@ export default function GalleryPreview() {
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [])
+
+  // Divine Radiance canvas animation
+  useDivineRadiance(canvasRef, sectionRef)
 
   // Observe .reveal elements
   useEffect(() => {
@@ -135,8 +237,11 @@ export default function GalleryPreview() {
 
   return (
     <section id="gallery_preview" className="gallery-preview" ref={sectionRef}>
-      {/* Header */}
-      <div className="container gallery-preview__header">
+      {/* Divine Radiance canvas background */}
+      <canvas ref={canvasRef} id="radiance-bg" />
+
+      {/* Header — z-index 1 above canvas */}
+      <div className="container gallery-preview__header" style={{ position: 'relative', zIndex: 1 }}>
         <p className="section-eyebrow reveal">From the Collection</p>
         <h2 className="gallery-preview__title reveal">
           Open any day.<br /><em>Find your light.</em>
@@ -145,7 +250,7 @@ export default function GalleryPreview() {
 
       {/* Images + scroll area — desktop only */}
       {!isMobile && (
-        <>
+        <div style={{ position: 'relative', zIndex: 1 }}>
           <div className="gallery-alternating">
             <div
               className="gallery-row gallery-row--left"
@@ -191,12 +296,12 @@ export default function GalleryPreview() {
 
             <div style={{ height: '60vh' }} />
           </div>
-        </>
+        </div>
       )}
 
       {/* Mobile: just show the verse */}
       {isMobile && (
-        <div className="gallery-mobile-quote">
+        <div className="gallery-mobile-quote" style={{ position: 'relative', zIndex: 1 }}>
           <div className="gallery-center-icon" aria-hidden="true">✦</div>
           <blockquote className="gallery-center-text">
             {QUOTE_TEXT}
@@ -206,7 +311,7 @@ export default function GalleryPreview() {
       )}
 
       {/* Footer CTA */}
-      <div className="container">
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div className="gallery-preview__cta-wrap reveal">
           <a href="https://let-there-be-lights.org/biblegallery/gallery" className="gallery-preview__cta">
             View All 365 →

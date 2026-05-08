@@ -24,11 +24,11 @@ export default function HomePage() {
       <GoldDivider />
       <TodaySection />
       <GoldDivider />
-      <AboutSection />
+      <MonthsNav />
       <GoldDivider />
       <GalleryPreview />
       <GoldDivider />
-      <MonthsNav />
+      <AboutSection />
     </main>
   )
 }

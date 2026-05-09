@@ -53,7 +53,7 @@ export default function AboutSection() {
 
           <div className="line-wrap">
             <p className="line-inner about__body">
-              A year of mornings. A year of light. Drawn from Scripture, from history, and from the lives of those who struggled and sang and believed before us, one image offered each day, not to instruct, but to illuminate.
+              A year of mornings. A year of light. Drawn from Scripture, from history, and from the lives of those who struggled, sang and believed before us, one image offered each day, not to instruct, but to illuminate.
             </p>
           </div>
 

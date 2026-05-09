@@ -40,7 +40,7 @@ export default function AppStoreButtons({
             </svg>
           </div>
           <div className="app-store-btn__text">
-            <span className="app-store-btn__sub">Download on the</span>
+            <span className="app-store-btn__sub">Download on</span>
             <span className="app-store-btn__main">App Store</span>
           </div>
         </a>

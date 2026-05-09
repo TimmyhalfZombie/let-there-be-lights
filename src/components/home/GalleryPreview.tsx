@@ -9,7 +9,7 @@ const ALL_IMAGES = [
   { src: '/images/Peace-Cultivated.jpg', title: 'Peace Cultivated', day: 'Aug 27' },
 ]
 
-const QUOTE_TEXT = "Each image reveals a timeless truth, drawn from Scripture, history, and the lives of those who walked before us — with a visual that quietly speaks to the soul. One reflection per day. Twelve months. A full year of light."
+const QUOTE_TEXT = "Each image reveals a timeless truth, with visuals drawn from Scripture, history, and the lives of those who walked before us, quietly speaks to the soul. One reflection a day for a whole year of light."
 
 const MOBILE_BREAKPOINT = 1024
 

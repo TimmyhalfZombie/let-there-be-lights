@@ -9,7 +9,7 @@ const ALL_IMAGES = [
   { src: '/images/Peace-Cultivated.jpg', title: 'Peace Cultivated', day: 'Aug 27' },
 ]
 
-const QUOTE_TEXT = "The Lord is my shepherd; I shall not want. He maketh me to lie down in green pastures: He leadeth me beside the still waters. He restoreth my soul: He leadeth me in the paths of righteousness for His name's sake."
+const QUOTE_TEXT = "Each image pairs a timeless truth — drawn from Scripture, history, and the lives of those who walked before us — with a visual that quietly speaks to the soul. One reflection per day. Twelve months. A full year of light."
 
 const MOBILE_BREAKPOINT = 1024
 
@@ -294,7 +294,6 @@ export default function GalleryPreview() {
                   </span>
                 ))}
               </blockquote>
-              <cite className="gallery-center-cite">Psalm 23:1–3</cite>
               <div className="gallery-center-line" aria-hidden="true" />
             </div>
 
@@ -321,10 +320,9 @@ export default function GalleryPreview() {
       {isMobile && (
         <div className="gallery-mobile-quote" style={{ position: 'relative', zIndex: 1 }}>
           <div className="gallery-center-icon" aria-hidden="true">✦</div>
-          <blockquote className="gallery-center-text">
+          <blockquote className="gallery-center-text" style={{ fontSize: '1.7rem', lineHeight: '1.4' }}>
             {QUOTE_TEXT}
           </blockquote>
-          <cite className="gallery-center-cite">Psalm 23:1–3</cite>
         </div>
       )}
 

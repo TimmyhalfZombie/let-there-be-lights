@@ -414,29 +414,30 @@ button {
 }
 
 .about__grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(40px, 6vw, 80px);
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.about__stat {
+.months-nav__stat {
   position: relative;
-  top: -4rem;
-  /* Change this to move it higher or lower */
+  margin-bottom: 2rem;
 }
 
-.about__number {
+.months-nav__number {
   display: block;
   font-family: var(--font-display);
-  font-size: clamp(8rem, 20vw, 16rem);
+  font-size: clamp(6rem, 19vw, 14rem);
   font-weight: 300;
   color: transparent;
   -webkit-text-stroke: 1px var(--gold);
   line-height: 0.85;
 }
 
-.about__unit {
+.months-nav__unit {
   display: block;
   font-family: var(--font-body);
   font-size: 0.85rem;
@@ -444,9 +445,7 @@ button {
   text-transform: uppercase;
   color: var(--gold);
   margin-top: 1.5rem;
-  text-align: left;
-  padding-left: 2rem;
-  /* Pushes it slightly inward under the 3 */
+  text-align: center;
 }
 
 .line-wrap {
@@ -522,12 +521,13 @@ button {
   line-height: 1.9;
   color: var(--text-secondary);
   max-width: 440px;
-  margin-top: 1.5rem;
+  margin: 1.5rem auto 0;
 }
 
 .app-links-wrapper {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 1.25rem;
   margin-top: 2.5rem;
 }
@@ -749,6 +749,12 @@ canvas#radiance-bg {
   display: inline;
 }
 
+.gallery-mobile-quote .gallery-center-text {
+  font-size: 1.7rem;
+  line-height: 1.5;
+  padding: 0 1.5rem;
+}
+
 .gallery-center-cite {
   display: block;
   font-family: var(--font-body);
@@ -866,6 +872,7 @@ canvas#radiance-bg {
   text-align: center;
   position: relative;
   z-index: 10;
+  margin-top: 2rem;
 }
 
 .months-nav__title {
@@ -873,6 +880,7 @@ canvas#radiance-bg {
   font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 300;
   color: var(--text);
+  margin-top: 4rem;
   margin-bottom: 0.75rem;
 }
 

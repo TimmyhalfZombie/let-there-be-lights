@@ -4,17 +4,22 @@ import { useScrollReveal } from '../../hooks/useScrollReveal.ts'
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 export default function MonthsNav() {
+  const statRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
   const rowRef = useRef<HTMLDivElement>(null)
 
-  useScrollReveal([titleRef, subtitleRef, rowRef])
+  useScrollReveal([statRef, titleRef, subtitleRef, rowRef])
 
   const currentMonth = useMemo(() => new Date().getMonth(), [])
 
   return (
     <section id="months_nav" className="months-nav">
       <div className="container">
+        <div ref={statRef} className="months-nav__stat reveal">
+          <span className="months-nav__number">365</span>
+          <span className="months-nav__unit">Images</span>
+        </div>
         <h2 ref={titleRef} className="months-nav__title reveal">Explore by Month</h2>
         <p ref={subtitleRef} className="months-nav__subtitle reveal">
           Each month holds a chapter of wisdom.

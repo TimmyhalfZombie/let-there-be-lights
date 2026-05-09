@@ -4,7 +4,6 @@ import AppStoreButtons from '../sharable/button'
 
 export default function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null)
-  const statRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -13,14 +12,6 @@ export default function AboutSection() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const section = entry.target as HTMLElement
-
-            // Trigger all .about-fade elements (stat side) with stagger
-            const fades = section.querySelectorAll('.about-fade')
-            fades.forEach((el, index) => {
-              const delay = 200 + index * 140
-                ; (el as HTMLElement).style.transitionDelay = `${delay}ms`
-              el.classList.add('visible')
-            })
 
             // Trigger all .line-inner elements (text side) with stagger
             const lines = section.querySelectorAll('.line-inner')
@@ -54,10 +45,6 @@ export default function AboutSection() {
   return (
     <section id="about" className="about" ref={sectionRef}>
       <div className="container about__grid">
-        <div ref={statRef} className="about__stat">
-          <span className="about-fade about__number">365</span>
-          <span className="about-fade about__unit">Images</span>
-        </div>
         <motion.div ref={textRef} className="about__text" style={{ y: textY }}>
           <h2 className="about__title">
             <div className="line-wrap"><span className="line-inner">Wisdom for</span></div>
@@ -66,10 +53,7 @@ export default function AboutSection() {
 
           <div className="line-wrap">
             <p className="line-inner about__body">
-              Each image pairs a timeless truth — drawn from Scripture, history,
-              and the lives of those who walked before us — with a visual that
-              quietly speaks to the soul. One reflection per day. Twelve months.
-              A full year of light.
+              A year of mornings. A year of light. Drawn from Scripture, from history, and from the lives of those who struggled and sang and believed before us, one image offered each day, not to instruct, but to illuminate.
             </p>
           </div>
 

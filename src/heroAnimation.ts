@@ -81,7 +81,9 @@ function createCurtainDOM() {
   tagline.id = 'curtain-tagline'
   tagline.style.cssText = `
     font-family: 'Libre Baskerville', Georgia, serif;
-    font-size: 0.88rem; letter-spacing: 0.2em;
+    font-size: clamp(0.65rem, 2.5vw, 0.88rem); 
+    letter-spacing: clamp(0.1em, 0.5vw, 0.2em);
+    white-space: nowrap;
     text-transform: uppercase; color: rgba(255,255,255,0.8);
     opacity: 0; transform: translateY(8px);
   `
